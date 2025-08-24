@@ -1,8 +1,11 @@
 package co.com.crediya.model.user.gateways;
 
 import co.com.crediya.model.user.User;
+import reactor.core.publisher.Mono;
 
 public interface UserRepository {
-    boolean availableByMail(String email);
-    User register(User user);
+    Mono<User> save(User user);
+
+    Mono<Boolean> availableByMail(String email);
+    Mono<User> register(User user);
 }

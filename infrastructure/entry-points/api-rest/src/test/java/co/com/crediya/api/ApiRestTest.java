@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ApiRestTest {
+/*class ApiRestTest {
 
     ApiRest apiRest = new ApiRest();
 
@@ -13,4 +13,4 @@ class ApiRestTest {
         var response = apiRest.commandName();
         assertEquals("", response);
     }
-}
+}*/

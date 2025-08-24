@@ -1,5 +1,13 @@
 server:
   port: 8080
+app:
+  datasource:
+    host: localhost
+    port: 5432
+    database: crediya
+    schema: public
+    username: postgres
+    password: admin
 spring:
   application:
     name: "Autenticacion"

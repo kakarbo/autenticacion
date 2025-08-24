@@ -1,30 +1,56 @@
 package co.com.crediya.api;
-import lombok.AllArgsConstructor;
+import co.com.crediya.api.dto.UserRequest;
+import co.com.crediya.api.dto.UserResponse;
+import co.com.crediya.model.user.User;
+import co.com.crediya.usecase.registeruser.RegisterUserUseCase;
+//import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
-/**
- * API Rest controller.
- * 
- * Example of how to declare and use a use case:
- * <pre>
- * private final MyUseCase useCase;
- * 
- * public String commandName() {
- *     return useCase.execute();
- * }
- * </pre>
- */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 @RestController
-@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
-@AllArgsConstructor
+@RequestMapping(value = "/api/v1/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
+//@AllArgsConstructor
 public class ApiRest {
 
+    private final RegisterUserUseCase registerUserUseCase;
 
-    @GetMapping(path = "/usecase/path")
-    public String commandName() {
-        return "";
+    public ApiRest(RegisterUserUseCase registerUserUseCase) {
+        this.registerUserUseCase = registerUserUseCase;
+    }
+
+    @PostMapping
+    public Mono<ResponseEntity<Map<String, Object>>> registerUser(@RequestBody UserRequest request) {
+
+        User user = new User(
+                request.idUser(),
+                request.nombre(),
+                request.apellido(),
+                request.fechaNacimiento(),
+                request.direccion(),
+                request.telefono(),
+                request.correoElectronico(),
+                request.salarioBase()
+        );
+
+        return registerUserUseCase.ejecute(user)
+            .map(savedUser -> {
+                Map<String, Object> body = new HashMap<>();
+                body.put("mensaje", "Usuario registrado exitosamente");
+                body.put("idUsuario", savedUser.getIdUser());
+                return ResponseEntity.ok(body);
+            })
+                .onErrorResume(e -> {
+                    Map<String, Object> error = new HashMap<>();
+                    error.put("mensaje", "Error al registrar usuario");
+                    //error.put("detalle", e.getMessage());
+                    return Mono.just(ResponseEntity.badRequest().body(error));
+                });
     }
 }

@@ -16,7 +16,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class User {
-    private UUID idUser;
+
+    @Builder.Default
+    private String idUser = UUID.randomUUID().toString();
+
     private String nombre;
     private String apellido;
     private LocalDate fechaNacimiento;
@@ -24,15 +27,4 @@ public class User {
     private String telefono;
     private String correoElectronico;
     private BigDecimal salarioBase;
-
-    public void validateData() throws IllegalAccessException {
-        if(nombre == null || nombre.isBlank())
-            throw new IllegalAccessException("El nombre no puede ser nulo o vacío");
-        if(apellido == null || apellido.isBlank())
-            throw new IllegalAccessException("El apellido no puede ser nulo o vacío");
-        if(correoElectronico == null || EmailValidate.isValid(correoElectronico))
-            throw new IllegalAccessException("Correo electronico inválido");
-        if(salarioBase == null || salarioBase.compareTo(BigDecimal.ZERO) >= 0 && salarioBase.compareTo(new BigDecimal("15000000")) <= 0)
-            throw new IllegalAccessException("El salario base debe ser mayor a cero y menor a 15000000");
-    }
 }
